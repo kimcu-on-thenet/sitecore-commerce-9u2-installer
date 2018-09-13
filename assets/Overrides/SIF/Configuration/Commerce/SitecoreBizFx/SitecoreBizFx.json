@@ -1,0 +1,135 @@
+﻿// -------------------------------------------------------------------------- //
+//         Sitecore Install Framework - Deploy Sitecore BizFx Services        //
+//                                                                            //
+//  Run this configuration to deploy Sitecore BizFx Services.                 //
+//                                                                            //
+//  NOTE: Only single line comments are accepted in configurations.           //
+// -------------------------------------------------------------------------- //
+{
+	"Parameters": {
+		"SitecoreBizFxServicesContentPath": {
+			"Type": "string",
+			"Description": "SitecoreBizFx Services Content Path"
+		},
+		"ServicePortSuffix": {
+			"Type": "string",
+			"Description": "SitecoreBizFx Service port suffix"
+		},
+		"UserAccount": {
+			"Type": "psobject",
+			"DefaultValue": {
+				"UserName": "",
+				"Domain": "$env:COMPUTERNAME",
+				"Password": ""
+			}
+		},
+		"RootCertFileName": {
+			"Type": "string",
+			"Description": "The file name of the root certificate to be created.",
+			"DefaultValue": "SitecoreRootCert"
+		},
+		"CommerceAuthoringServicesPort": {
+			"Type": "string",
+			"Description": "Commerce Authoring Services port"
+		},
+		"InstallationDir": { 
+			"Type": "string", 
+			"Description": "The SitecoreBizFx site content path."
+		},
+		"SitecoreBizFxNamePostfix": {
+			"Type": "string",
+			"Description": "Sitecore Biz Fx name"
+		}
+	},
+	"Variables": {
+		"SitecoreBizFxName": "[concat('SitecoreBizFx_', parameter('SitecoreBizFxNamePostfix'))]",
+		"SitecoreBizFxPhysicalPath": "[concat(parameter('InstallationDir'), variable('SitecoreBizFxName'))]",
+		// The name dns name of the root certificate.
+		"Root.Cert.DnsName": "[concat('DO_NOT_TRUST_', parameter('RootCertFileName'))]",
+		// The certificate store for the root certificate.
+		"Root.Cert.Store": "cert:\\LocalMachine\\Root"
+	},
+	"Modules": [
+		"ManageCommerceService",
+		"DeployCommerceContent",
+		"WindowsLocalUser"
+	],
+	"Tasks": {
+		"StopSite": {
+			"Type": "ManageWebsite",
+			"Params": {
+				"Name": "[variable('SitecoreBizFxName')]",
+				"Action": "Stop",
+				"ErrorAction": "SilentlyContinue"
+			}
+		},
+		"RemoveSite": {
+			"Type": "ManageCommerceService",
+			"Params": {
+				"Name": "[variable('SitecoreBizFxName')]",
+				"Action": "Remove-Website"
+			}
+		},
+		"StopAppPool": {
+			"Type": "ManageAppPool",
+			"Params": {
+				"Name": "[variable('SitecoreBizFxName')]",
+				"Action": "Stop",
+				"ErrorAction": "SilentlyContinue"
+			}
+		},
+		"RemoveAppPool": {
+			"Type": "ManageCommerceService",
+			"Params": {
+				"Name": "[variable('SitecoreBizFxName')]",
+				"Action": "Remove-WebAppPool"
+			}
+		},
+		"RemoveSiteFolder": {
+			"Type": "ManageCommerceService",
+			"Params": {
+				"Name": "Name",
+				"PhysicalPath": "[variable('SitecoreBizFxPhysicalPath')]",
+				"Action": "Remove-Item"
+			}
+		},
+		"DeployCommerceContent": {
+			"Type": "DeployCommerceContent",
+      		"Params": {
+				"Name": "SitecoreBizFx",
+				"ServicesContentPath": "[parameter('SitecoreBizFxServicesContentPath')]",
+				"CommerceAuthoringServicesPort": "[parameter('CommerceAuthoringServicesPort')]",
+				"PhysicalPath": "[variable('SitecoreBizFxPhysicalPath')]",
+				"UserAccount": "[parameter('UserAccount')]",
+				"ServicePortSuffix": "[parameter('ServicePortSuffix')]"
+			}
+		},
+		"CreatePaths": {
+			"Type": "EnsurePath",
+			"Params": {
+				"Exists": [
+					"[variable('SitecoreBizFxPhysicalPath')]"
+				]
+			}
+		},
+		"CreateWebAppPool": {
+			"Type": "ManageCommerceService",
+			"Params": {
+				"Name": "[variable('SitecoreBizFxName')]",
+				"Action": "Create-WebAppPool",
+				"UserAccount": "[parameter('UserAccount')]"
+			}
+		},
+		"CreateWebsite": {
+			"Type": "ManageCommerceService",
+			"Params": {
+				"Name": "[variable('SitecoreBizFxName')]",
+				"Action": "Create-Website",
+				"AppPoolName": "[variable('SitecoreBizFxName')]",
+				"PhysicalPath": "[variable('SitecoreBizFxPhysicalPath')]",
+				"Port": "[concat('4200', parameter('ServicePortSuffix'))]",
+				"Signer": "[GetCertificate(variable('Root.Cert.DnsName'), variable('Root.Cert.Store'))]"
+			}
+		}
+	}
+}

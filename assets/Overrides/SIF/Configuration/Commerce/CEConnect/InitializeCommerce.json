@@ -1,0 +1,61 @@
+﻿// ------------------------------------------------------------------------------ //
+//         Sitecore Install Framework - Apply Commerce Engine certificate         //
+//                                                                                //
+//  Run this configuration to apply the Commerce Engine certificate.              //
+//                                                                                //
+//  NOTE: Only single line comments are accepted in configurations.               //
+// ------------------------------------------------------------------------------ //
+{
+  "Parameters": {
+    "EngineConnectIncludeDir": {
+      "Type": "string",
+      "Description": "The path to the Engine Connect App_Confign directory"
+    },
+    "CertificatePath": {
+      "Type": "string",
+      "Description": "The full path to the Commerce Engine certificate file."
+    },
+    "CommerceServicesPostfix": {
+      "Type": "string",
+      "Description": "The Commerce Engine postfix for services names"
+    },
+    "CommerceAuthoringServicesPort": {
+      "Type": "string",
+      "Description": "Commerce Authoring Services port"
+    },
+    "InstallationDir": { "Type": "string", "Description": "The commerce engine site content path." }
+  },
+  "Variables": {
+    "CommerceOps": "[concat('CommerceOps_', parameter('CommerceServicesPostfix'))]",
+    "CommerceShops": "[concat('CommerceShops_', parameter('CommerceServicesPostfix'))]",
+    "CommerceAuthoring": "[concat('CommerceAuthoring_', parameter('CommerceServicesPostfix'))]",
+    "CommerceMinions": "[concat('CommerceMinions_', parameter('CommerceServicesPostfix'))]",
+    "CommerceOpsPhysicalPath": "[concat(parameter('InstallationDir'), variable('CommerceOps'))]",
+    "CommerceShopsPhysicalPath": "[concat(parameter('InstallationDir'), variable('CommerceShops'))]",
+    "CommerceAuthoringPhysicalPath": "[concat(parameter('InstallationDir'), variable('CommerceAuthoring'))]",
+    "CommerceMinionsPhysicalPath": "[concat(parameter('InstallationDir'), variable('CommerceMinions'))]"
+  },
+  "Modules": ["InitializeCommerce"],
+  "Tasks": {
+    "ApplyCertificate": {
+      "Type": "ApplyCertificate",
+      "Params": {
+        "EngineConnectIncludeDir": "[parameter('EngineConnectIncludeDir')]",
+        "CertificatePath": "[parameter('CertificatePath')]",
+        "CommerceServicesPathCollection": [
+          "[variable('CommerceOpsPhysicalPath')]",
+          "[variable('CommerceShopsPhysicalPath')]",
+          "[variable('CommerceAuthoringPhysicalPath')]",
+          "[variable('CommerceMinionsPhysicalPath')]"
+        ]
+      }
+    },
+    "UpdateShopsPort": {
+      "Type": "UpdateShopsPort",
+      "Params": {
+        "EngineConnectIncludeDir": "[parameter('EngineConnectIncludeDir')]",
+        "CommerceAuthoringServicesPort": "[parameter('CommerceAuthoringServicesPort')]"
+      }
+    }
+  }
+}
