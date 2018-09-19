@@ -34,7 +34,9 @@ param(
 	[Parameter(Mandatory=$true)]
 	[psobject] $BrainTreeAccount = $null,
 	[psobject] $UserAccount = $null,
-	[string] $MasterSingleServer = "Master_SingleServer.json"
+	[string] $MasterSingleServer = "Master_SingleServer.json",
+	[string] $SitecoreUsername = "sitecore\admin",
+	[string] $SitecoreUserPassword = "b"
 )
 
 $global:DEPLOYMENT_DIRECTORY=Split-Path $MyInvocation.MyCommand.Path
@@ -69,8 +71,8 @@ $params = @{
 		CommerceServicesGlobalDbName = $CommerceServicesGlobalDbName		
 		SitecoreDbServer = $SqlServer            												##################
 		SitecoreCoreDbName = "$($InstanceName)_Core"											##################
-		SitecoreUsername = "sitecore\admin"
-		SitecoreUserPassword = "b"
+		SitecoreUsername = $SitecoreUsername
+		SitecoreUserPassword = $SitecoreUserPassword
 		CommerceSearchProvider = $CommerceSearchProvider
 		SolrUrl = $SolrUrl																		##################
 		SolrRoot = $SolrRoot

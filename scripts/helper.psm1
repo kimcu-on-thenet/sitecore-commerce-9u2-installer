@@ -218,3 +218,42 @@ Function Remove-Certs
         Write-Host "Could not find certificate under cert:\LocalMachine\My" -ForegroundColor Yellow
     }
 }
+
+Function Deploy-SPE-Remoting
+{
+    param (
+        [string] $SPERemotingZipFile
+    )
+    $UserModule = Resolve-Path -Path "$($Home)\Documents\WindowsPowerShell\Modules"
+    If (!(Test-Path -Path "$UserModule\SPE"))
+    {
+        Expand-Archive -Path $SPERemotingZipFile -DestinationPath $UserModule
+    }
+}
+
+Function Update-BusinessTool-Url
+{
+    param (
+        [string] $SiteUrl,
+        [string] $SitecoreUsername,
+        [string] $SitecoreUserPassword,
+        [string] $NewBusinessToolUrl
+    )
+
+    Import-Module -Name SPE
+
+    $session = New-ScriptSession -Username $SitecoreUsername -Password $SitecoreUserPassword -ConnectionUri $SiteUrl
+
+    Invoke-RemoteScript -Session $session -ScriptBlock { 
+        $item = Get-Item core:/sitecore/client/Applications/Launchpad/PageSettings/Buttons/Commerce/BusinessTools
+        If ($null -ne $item)
+        {
+            Write-Output "Replace the business tool Url from $($item["Link"]) to $($using:NewBusinessToolUrl)"
+            $item.Editing.BeginEdit()
+            $item["Link"] = $using:NewBusinessToolUrl
+            $item.Editing.EndEdit() | Out-Null
+        }
+    }
+
+    Stop-ScriptSession -Session $session
+}

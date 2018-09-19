@@ -1,5 +1,4 @@
 $ErrorActionPreference = 'Stop'
-
 . $PSScriptRoot\parameters.ps1
 
 Write-Host "*******************************************************" -ForegroundColor Green
@@ -90,7 +89,9 @@ try {
                                 -BrainTreeAccount $BraintreeAccount `
                                 -SitecoreModulesPath $assetPath `
                                 -BizFxFolder $commerceBizFX `
-								-UserAccount $UserAccount 
+                                -UserAccount $UserAccount `
+                                -SitecoreUsername $SitecoreUsername `
+                                -SitecoreUserPassword $SitecoreUserPassword
 }
 catch 
 {
@@ -100,11 +101,14 @@ catch
 finally
 {
     Set-Location -Path "$($CurrentPath)"
-	$AppConfigIncludeZCustom = Join-Path -Path $AppConfigIncludeFolder -ChildPath "Z.Custom"
-    Remove-Item -Path $AppConfigIncludeZCustom -Force -Recurse
 }
 
+Deploy-SPE-Remoting -SPERemotingZipFile $SPERemotingZipFile
+Update-BusinessTool-Url -SiteUrl $SiteUrl `
+                        -SitecoreUsername $SitecoreUsername `
+                        -SitecoreUserPassword $SitecoreUserPassword `
+                        -NewBusinessToolUrl $NewBusinessToolUrl
 
-
-
+$AppConfigIncludeZCustom = Join-Path -Path $AppConfigIncludeFolder -ChildPath "Z.Custom"
+Remove-Item -Path $AppConfigIncludeZCustom -Force -Recurse
 

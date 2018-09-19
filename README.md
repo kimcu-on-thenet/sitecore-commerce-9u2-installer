@@ -10,7 +10,8 @@
   - Current SDK version: `2.1.202`
 - Download and install [DotNetCore.2.0.0-WindowsHosting](https://download.microsoft.com/download/B/1/D/B1D7D5BF-3920-47AA-94BD-7A6E48822F18/DotNetCore.2.0.0-WindowsHosting.exe)
 - Download `Sitecore.Commerce.2018.07-2.2.126.zip` from [Sitecore Experience Commerce 9.0 Update-2](https://dev.sitecore.net/Downloads/Sitecore_Commerce/90/Sitecore_Experience_Commerce_90_Update2.aspx)
-- Download `Sitecore PowerShell Extensions-4.7.2 for Sitecore 8.zip` package
+- Download [Sitecore PowerShell Extensions-4.7.2 for Sitecore 8.zip](https://marketplace.sitecore.net/services/~/download/3D2CADDAB4A34CEFB1CFD3DD86D198D5.ashx?data=Sitecore%20PowerShell%20Extensions-4.7.2%20for%20Sitecore%208&itemId=6aaea046-83af-4ef1-ab91-87f5f9c1aa57)
+- Download [SPE Remoting-4.7.zip](https://marketplace.sitecore.net/services/~/download/9624E65780594246A30FCB2F79770ECA.ashx?data=SPE%20Remoting-4.7&itemId=6aaea046-83af-4ef1-ab91-87f5f9c1aa57)
 - Download `Sitecore Experience Accelerator 1.7.1 rev. 180604 for 9.0.zip` package from [Sitecore Experience Accelerator 1.7 Update-1 (Sitecore Experience Accelerator for 9.0)](https://dev.sitecore.net/Downloads/Sitecore_Experience_Accelerator/17/Sitecore_Experience_Accelerator_17_Update1.aspx)
 
 ## Getting started
@@ -32,7 +33,8 @@
 - Copy the following `*.zip` files to `assets` folder
     1. `Sitecore.Commerce.2018.07-2.2.126.zip`
     2. `Sitecore PowerShell Extensions-4.7.2 for Sitecore 8.zip`
-    3. `Sitecore Experience Accelerator 1.7.1 rev. 180604 for 9.0.zip`
+    3. `SPE Remoting-4.7.zip`
+    4. `Sitecore Experience Accelerator 1.7.1 rev. 180604 for 9.0.zip`
 - Open the `paramerters.ps1` file by any editor then modify the corresponding values
 
   ```powershell
@@ -48,7 +50,7 @@
 
   $BraintreeAccount = @{
     MerchantId = '-------------Merchant ID-------------------'
-    PublicKey = '-------------Public Key-------------------'
+    PublicKey = '--------------Public Key--------------------'
     PrivateKey = '-------------Private Key-------------------'
   }
 
